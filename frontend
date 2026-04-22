@@ -1,0 +1,29 @@
+pipeline{
+    agent any
+    
+    stages{
+        stage('pull'){
+            steps{
+                git branch: 'main',
+                    url: 'https://github.com/mayurmwagh/flight-reservation-app.git'
+            }
+        }
+        stage('deployment'){
+            steps{
+                sh'''
+                cd frontend
+                npm install
+                npm run build
+                '''
+            }
+        }
+        stage('s3'){
+            steps{
+                sh'''
+                cd frontend
+                aws s3 sync dist/ s3://cbz-frontend-project-abhinav
+                '''
+            }
+        }
+    }
+}
